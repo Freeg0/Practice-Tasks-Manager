@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "noEmitOnError": true,
+    "experimentalDecorators": true,
+    "noFallthroughCasesInSwitch": true,
+    "jsx": "react-jsx",
+  },
+  "include": [
+    "src"
+  ]
+}
