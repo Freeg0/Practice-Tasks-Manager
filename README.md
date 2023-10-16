@@ -1,2 +1,3 @@
 # Practice-Tasks-Manager
-It's a project to practice my skills in React and discovering zustand
+Little project of a tasks manager for practice my skills in react.js and node.js
+discover of zustand, passport and hapi/iron
