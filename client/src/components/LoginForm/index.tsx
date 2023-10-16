@@ -1,14 +1,34 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../../context/auth'
+import useAuthStore from '../../store/useAuthStore'
+import { useNavigate } from 'react-router-dom'
+import { useAuthContext } from '../../context/auth'
 
 const LoginForm = () => {
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
-  const auth = useAuth()
+  const error = useAuthStore((state) => state.error)
+  const auth = useAuthContext()
+  const navigate = useNavigate()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    try {
+      const success = await auth.login({ username, password })
+      if (success) {
+        navigate('/dashboard')
+      } else {
+        throw new Error(error)
+      }
+    } catch (error) {
+      console.error('An unexpected error happened occurred:', error)
+    }
+  }
 
   return (
     <div>
+      {error ? <h4>{error}</h4> : <></>}
       <input
         type="text"
         id="username"
@@ -25,13 +45,7 @@ const LoginForm = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button
-        onClick={() => {
-          auth.login({ username, password })
-        }}
-      >
-        Log In
-      </button>
+      <button onClick={handleSubmit}>Log In</button>
       <Link to="createUser">Create Account</Link>
     </div>
   )

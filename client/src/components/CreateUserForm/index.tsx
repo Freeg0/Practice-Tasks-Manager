@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import useStore from '../../store/useUserStore'
+import useUserStore from '../../store/useUserStore'
 
 const CreateUserForm = () => {
   const navigate = useNavigate()
@@ -8,7 +8,7 @@ const CreateUserForm = () => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const createUser = useStore((state) => state.createUser)
+  const createUser = useUserStore((state) => state.createUser)
 
   return (
     <div>

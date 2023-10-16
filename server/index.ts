@@ -14,6 +14,8 @@ import deleteTask from './src/tasks/deleteTask'
 import createUser from './src/users/createUser'
 import initializePassport from './passport-config'
 import { getUserByUsername, getUserById } from './src/users/getUser'
+import { loginUser } from './src/auth/authentication'
+import { user } from './src/auth/user'
 
 const pool = new pg.Pool({
   user: 'julien',
@@ -26,24 +28,9 @@ const app = express()
 
 initializePassport(
   passport,
-  (username) => getUserByUsername(pool)({ username }),
-  (id) => getUserById(pool)({ id })
+  ({ username }) => getUserByUsername(pool)({ username }),
+  ({ id }) => getUserById(pool)({ id })
 )
-
-const checkNotAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return res.redirect('/dashboard')
-  }
-  next()
-}
-
-const checkAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next()
-  }
-
-  res.redirect('/')
-}
 
 app.use((_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
@@ -58,14 +45,13 @@ app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.TOKEN_SECRET,
     resave: false,
     saveUninitialized: false,
   })
 )
 app.use(passport.initialize())
 app.use(passport.session())
-app.use(methodOverride('_method'))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -81,20 +67,17 @@ app.delete('/task/:id', deleteTask(pool))
 
 // USERS ROUTES
 app.post('/user', createUser(pool))
-app.post(
-  '/login',
-  checkNotAuthenticated,
-  passport.authenticate('local', {
-    successRedirect: '/dashboard',
-    failureRedirect: '/',
-    failureFlash: true,
-  })
-)
-app.post('/isAuth', checkAuthenticated)
 
-// app.delete('/logout', (req, res) => {
-//   req.logOut()
-//   res.redirect('/login')
-// })
+// AUTHENTICATION ROUTES
+app.post('/login', loginUser)
+app.get('/isAuth', user(pool))
+app.post('/logout', (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err)
+    }
+    res.redirect('/')
+  })
+})
 
 app.listen(3000, () => console.log('API server is running...'))

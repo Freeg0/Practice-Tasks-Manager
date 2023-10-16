@@ -1,18 +1,23 @@
 import { Pool } from 'pg'
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 
 const createUser =
   (pool: Pool) => async (request: Request, response: Response) => {
     try {
       const { username, password } = request.body
 
-      const hashedPassword = await bcrypt.hash(password, 10)
+      // const hashedPassword = await bcrypt.hash(password, 10)
+      const salt = crypto.randomBytes(16).toString('hex')
+      const hashedPassword = crypto
+        .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
+        .toString('hex')
 
       await pool.query(
-        `INSERT INTO users (username, password)
-       VALUES ($1, $2) RETURNING id;`,
-        [username, hashedPassword]
+        `INSERT INTO users (username, password, salt)
+       VALUES ($1, $2, $3) RETURNING id;`,
+        [username, hashedPassword, salt]
       )
 
       // Send a success response with a status code of 201 (Created)

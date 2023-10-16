@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
-import useStore from '../../store/useTodosStore'
+import useTaskStore from '../../store/useTaskStore'
 
 const TodoList = () => {
-  const tasks = useStore((state) => state.todos)
-  const onLoad = useStore((state) => state.onLoad)
-  const deleteTask = useStore((state) => state.deleteTodos)
+  const tasks = useTaskStore((state) => state.tasks)
+  const onLoad = useTaskStore((state) => state.onLoad)
+  const deleteTask = useTaskStore((state) => state.deleteTasks)
 
   useEffect(() => {
     onLoad()
@@ -22,14 +22,14 @@ const TodoList = () => {
           </tr>
         </thead>
         <tbody>
-          {tasks.map((todo, index) => (
+          {tasks.map((task, index) => (
             <tr key={index}>
-              <td>{todo.id}</td>
-              <td>{todo.name}</td>
-              <td>{todo.description}</td>
-              <td>{todo.state}</td>
+              <td>{task.id}</td>
+              <td>{task.name}</td>
+              <td>{task.description}</td>
+              <td>{task.state}</td>
               <td>
-                <button onClick={() => deleteTask({ id: todo.id })}>
+                <button onClick={() => deleteTask({ id: task.id })}>
                   Delete Task
                 </button>
               </td>

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import axios from 'axios'
 
-export interface Todo {
+export interface Task {
   id: number
   name: string
   description: string
@@ -9,32 +9,32 @@ export interface Todo {
 }
 
 type Store = {
-  todos: Todo[]
+  tasks: Task[]
   isLoading: boolean
   error: null
   onLoad: () => void
-  createTodos: (createTodosParams: {
+  createTasks: (createTasksParams: {
     name: string
     description: string
   }) => void
-  deleteTodos: (todoToDelete: { id: number }) => void
+  deleteTasks: (taskToDelete: { id: number }) => void
 }
 
-const useTodosStore = create<Store>(
+const useTasksStore = create<Store>(
   (set, get): Store => ({
-    todos: [],
+    tasks: [],
     isLoading: false,
     error: null,
     onLoad: async () => {
       try {
         set((state) => ({ ...state, isLoading: true }))
         const response = await axios.get('http://localhost:3000/tasks')
-        set((state) => ({ ...state, isLoading: false, todos: response.data }))
+        set((state) => ({ ...state, isLoading: false, tasks: response.data }))
       } catch (err: any) {
         set((state) => ({ ...state, error: err.message, isLoading: false }))
       }
     },
-    createTodos: async ({
+    createTasks: async ({
       name,
       description,
     }: {
@@ -48,21 +48,21 @@ const useTodosStore = create<Store>(
           description,
         })
         const updatedData = [
-          ...get().todos,
+          ...get().tasks,
           { id: response?.data.id, name, description, state: 'todo' },
         ]
-        set((state) => ({ ...state, isLoading: false, todos: updatedData }))
+        set((state) => ({ ...state, isLoading: false, tasks: updatedData }))
       } catch (err: any) {
         set((state) => ({ ...state, error: err.message, isLoading: false }))
       }
     },
-    deleteTodos: async ({ id }: { id: number }) => {
+    deleteTasks: async ({ id }: { id: number }) => {
       try {
         console.log(id)
         set((state) => ({ ...state, isLoading: true }))
         await axios.delete(`http://localhost:3000/task/${id}`)
-        const updatedData = get().todos.filter((todo) => todo.id !== id)
-        set((state) => ({ ...state, isLoading: false, todos: updatedData }))
+        const updatedData = get().tasks.filter((task) => task.id !== id)
+        set((state) => ({ ...state, isLoading: false, tasks: updatedData }))
       } catch (err: any) {
         console.log(err)
         set((state) => ({ ...state, error: err.message, isLoading: false }))
@@ -71,4 +71,4 @@ const useTodosStore = create<Store>(
   })
 )
 
-export default useTodosStore
+export default useTasksStore

@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
-import useStore from '../../store/useTodosStore'
+import useTaskStore from '../../store/useTaskStore'
 
-const CreateTodoForm = () => {
+const CreateTaskForm = () => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const createTodos = useStore((state) => state.createTodos)
+  const createTasks = useTaskStore((state) => state.createTasks)
 
-  const addTodos = () => {
-    createTodos({ name: title, description })
+  const addTasks = () => {
+    createTasks({ name: title, description })
     setTitle('')
     setDescription('')
   }
@@ -30,9 +30,9 @@ const CreateTodoForm = () => {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
-      <button onClick={addTodos}>Create Task</button>
+      <button onClick={addTasks}>Create Task</button>
     </div>
   )
 }
 
-export default CreateTodoForm
+export default CreateTaskForm

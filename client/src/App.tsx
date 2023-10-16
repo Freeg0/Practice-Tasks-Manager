@@ -1,5 +1,4 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import LoginForm from './components/LoginForm'
 import CreateUserForm from './components/CreateUserForm'
